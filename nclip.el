@@ -47,10 +47,12 @@
 It seems that it contains some metadata about killed item so this variable
 makes possible to update kill ring only when content of clipboard changes.")
 
+(defun nclip--noop (status) nil)
+
 (defun nclip--set-selection (data)
   (let ((url-request-method "POST")
         (url-request-data data))
-    (url-retrieve-synchronously nclip-server)))
+    (url-retrieve nclip-server 'nclip--noop)))
 
 (defun nclip--get-selection ()
   (with-temp-buffer
