@@ -2,6 +2,14 @@
 require 'webrick'
 require 'open3'
 
+$AUTH_TOKEN = ENV["NCLIP_AUTH_TOKEN"] || "my-token"
+$PORT = 2547
+
+puts "NCLIP server starting at http://127.0.0.1:#{$PORT}"
+puts
+puts "Using '#{$AUTH_TOKEN}' as the authorization token."
+puts
+
 class OSXClipboard
   def self.paste()
     `pbpaste`
@@ -14,9 +22,12 @@ class OSXClipboard
   end
 end
 
-server = WEBrick::HTTPServer.new :Port => 2547
+server = WEBrick::HTTPServer.new :BindAddress => "127.0.0.1", :Port => $PORT
 
 server.mount_proc '/' do |req, res|
+  raise WEBrick::HTTPStatus::Forbidden, "Invalid token." if
+    req.query_string != $AUTH_TOKEN
+
   if req.request_method == 'GET'
     res.body = OSXClipboard.paste
   else

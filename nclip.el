@@ -4,7 +4,7 @@
 ;;
 ;; Author: Marian Schubert <marian.schubert@gmail.com>
 ;; URL: http://www.github.com/maio/nclip.el
-;; Version: 1
+;; Version: 2
 ;; Keywords: nclip, clipboard, network
 ;; Package-Requires: ()
 
@@ -40,6 +40,7 @@
 
 (require 'url)
 
+(defvar nclip-auth-token (or (getenv "NCLIP_AUTH_TOKEN") "my-token"))
 (defvar nclip-server "http://127.0.0.1:2547/")
 
 (defvar nclip--last-selection nil
@@ -49,14 +50,17 @@ makes possible to update kill ring only when content of clipboard changes.")
 
 (defun nclip--noop (status) nil)
 
+(defun nclip--build-url ()
+  (concat nclip-server "?" nclip-auth-token))
+
 (defun nclip--set-selection (data)
   (let ((url-request-method "POST")
         (url-request-data data))
-    (url-retrieve nclip-server 'nclip--noop)))
+    (url-retrieve (nclip--build-url) 'nclip--noop)))
 
 (defun nclip--get-selection ()
   (with-temp-buffer
-    (url-insert-file-contents nclip-server)
+    (url-insert-file-contents (nclip--build-url))
     (buffer-string)))
 
 (defun nclip-cut (text &optional push)

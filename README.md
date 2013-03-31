@@ -4,34 +4,44 @@ Network clipboard for Emacs which makes possible to use your local
 clipboard even when you are running Emacs inside terminal on remote
 server.
 
-When enabled it will use remote HTTP server to fetch and update
-clipboard content. Included HTTP server `nclip.py` supports OSX
+When enabled, it will use remote HTTP server to fetch and update
+clipboard content. Included HTTP server `nclip.rb` supports OSX
 (pbcopy/pbpaste) but it should be pretty straightforward to support
 other systems as well (e.g. Linux using xclip).
 
 ### Usage
 
-Run `nclip.py` on your local machine. Setup SSH port forwarding so
+Run `nclip.rb` on your local machine. Setup SSH port forwarding so
 that when you SSH to remote server it will forward `2547` port on
 remote server over SSH to `127.0.0.1:2547`.
 
-```ssh -R 2547:127.0.0.1:2547 server```
+From command line:
+```ssh -R 2547:127.0.0.1:2547 some-server```
+
+Or you can use `~/.ssh/config`:
+```
+Host some-server
+    RemoteForward 127.0.0.1:2547 127.0.0.1:2547
+```
 
 ### Security
 
-*Warning*: Other people on same host are able to access your clipboard
-if you use current version of nclip.el
+NCLIP uses plain HTTP server which listens on localhost port 2547 so
+anyone on the same host can send HTTP requests to it. GET request will
+return content of your clipboard and POST request will update it's
+content.
 
-I'm using it for local development inside Vagrant or on server with
-trusted people so I don't care too much about this right now, but it
-would be nice to secure access to the clipboard so that people on same
-host can't access it by fetching `http://127.0.0.1:2547/`.
+To protect your clipboard data when using NCLIP on hosts shared by
+more people, NCLIP provides simple token authorization. In order to
+use it, you put some secret string into NCLIP_AUTH_TOKEN environment
+variable before running `nclip.rb` and Emacs. NCLIP will then use this
+token to authorize all clipboard requests.
 
-Someone could just POST "rm -rf /\n" to `http://127.0.0.1:2547/` so be
-aware. :)
+If you don't run Emacs on shared hosts you can skip this step and
+NCLIP will use default token.
 
 ### TODO
 
-- Security
 - Support other operating systems
 - Make host/port configurable
+- Don't use ENV variable for the token
