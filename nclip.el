@@ -53,11 +53,9 @@ makes possible to update kill ring only when content of clipboard changes.")
     (url-retrieve-synchronously nclip-server)))
 
 (defun nclip--get-selection ()
-  (with-current-buffer (url-retrieve-synchronously nclip-server)
-    ;; body contains clipboard content
-    (goto-char url-http-end-of-headers)
-    (forward-line)
-    (buffer-substring (point) (point-max))))
+  (with-temp-buffer
+    (url-insert-file-contents nclip-server)
+    (buffer-string)))
 
 (defun nclip-cut (text &optional push)
   (nclip--set-selection text)
