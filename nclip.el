@@ -25,8 +25,14 @@
 
 ;;; Commentary:
 
-;; Useful when you work on remote host inside terminal and you want to
-;; use your local clipboard.
+;; nclip.el is network clipboard for Emacs which makes possible to use
+;; your local clipboard even when you are running Emacs inside
+;; terminal on remote server.
+;;
+;; When enabled, it will use remote HTTP server to fetch and update
+;; clipboard content. Included HTTP server `nclip.rb` supports OSX
+;; (pbcopy/pbpaste) but it should be pretty straightforward to support
+;; other systems as well (e.g. Linux using xclip).
 
 ;;; Installation:
 
@@ -34,6 +40,21 @@
 
 ;;; Usage:
 
+;; Run `nclip.rb` on your local machine. Setup SSH port forwarding so
+;; that when you SSH to remote server it will forward `2547` port on
+;; remote server over SSH to `127.0.0.1:2547`.
+;;
+;; From command line:
+;; ```ssh -R 2547:127.0.0.1:2547 some-server```
+;;
+;; Or you can use `~/.ssh/config`:
+;; ```
+;; Host some-server
+;;     RemoteForward 127.0.0.1:2547 127.0.0.1:2547
+;; ```
+
+;; Run Emacs on remote server and enable nclip using:
+;;
 ;; M-x turn-on-nclip
 
 ;;; Code:
