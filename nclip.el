@@ -45,17 +45,18 @@
 ;; remote server over SSH to `127.0.0.1:2547`.
 ;;
 ;; From command line:
-;; ```ssh -R 2547:127.0.0.1:2547 some-server```
 ;;
-;; Or you can use `~/.ssh/config`:
-;; ```
-;; Host some-server
-;;     RemoteForward 127.0.0.1:2547 127.0.0.1:2547
-;; ```
+;;    ssh -R 2547:127.0.0.1:2547 some-server
+;;
+;; Or you can use ~/.ssh/config:
+
+;;    Host some-server
+;;      RemoteForward 127.0.0.1:2547 127.0.0.1:2547
+;;
 
 ;; Run Emacs on remote server and enable nclip using:
 ;;
-;; M-x turn-on-nclip
+;;     M-x turn-on-nclip
 
 ;;; Code:
 
@@ -98,6 +99,7 @@ makes possible to update kill ring only when content of clipboard changes.")
      (t
       (setq nclip--last-selection clip-text)))))
 
+;;;###autoload
 (defun turn-on-nclip ()
   (interactive)
   (setq interprogram-cut-function 'nclip-cut)
@@ -109,3 +111,4 @@ makes possible to update kill ring only when content of clipboard changes.")
   (setq interprogram-paste-function nil))
 
 (provide 'nclip)
+;;; nclip.el ends here
